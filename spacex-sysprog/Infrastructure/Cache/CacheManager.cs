@@ -7,7 +7,7 @@ public class CacheManager
 {
     private readonly int _ttlSeconds;
     private readonly Logger _logger;
-    private readonly ConcurrentDictionary<string, (DateTime storedAt, string payload)> _store = new(); // ← CHANGED
+    private readonly ConcurrentDictionary<string, (DateTime storedAt, string payload)> _store = new();
 
     public CacheManager(int ttlSeconds, Logger logger)
     {
@@ -15,7 +15,7 @@ public class CacheManager
         _logger = logger;
     }
 
-    public bool TryGet(string key, out string payload)
+    public bool TryGet(string key, out string payload)      //payloud je json string (izlaz)
     {
         payload = string.Empty;
         if (_store.TryGetValue(key, out var entry))
@@ -24,13 +24,13 @@ public class CacheManager
             {
                 payload = entry.payload;
                 _logger.Info($"Keš HIT: {key}");
-                return true;
+                return true;                                //da li je uspesno trazenje
             }
             _logger.Info($"Keš ISTEKAO: {key}");
             _store.TryRemove(key, out _);
         }
         _logger.Info($"Keš PROMAŠEN: {key}");
-        return false;
+        return false;                                          //nije pronadjen u kesu
     }
 
     public void Set(string key, string payload)
